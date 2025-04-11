@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_inherit_iva_import" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.iva.import</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="requires_review" invisible="1"/>
+                <div class="alert alert-warning" role="alert" 
+                     invisible="not requires_review">
+                    Esta factura contiene percepciones u otros conceptos que requieren revisión manual.
+                </div>
+            </xpath>
+            <field name="ref" position="after">
+                <field name="account_iva_file_id" readonly="1" 
+                       invisible="not account_iva_file_id"/>
+                <field name="file_amount" readonly="1" 
+                       invisible="file_amount == 0"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_invoice_tree_with_review" model="ir.ui.view">
+        <field name="name">account.move.tree.with.review</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <tree position="inside">
+                <field name="requires_review" invisible="1"/>
+                <field name="account_iva_file_id" invisible="1"/>
+            </tree>
+            <tree position="attributes">
+                <attribute name="decoration-warning">requires_review</attribute>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_move_in_invoice_with_perceptions" model="ir.actions.act_window">
+        <field name="name">Facturas con Percepciones</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('requires_review', '=', True), ('move_type', 'in', ['in_invoice', 'in_refund'])]</field>
+        <field name="context">{'default_move_type': 'in_invoice'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay facturas que requieran revisión
+            </p>
+            <p>
+                Las facturas con percepciones se marcarán automáticamente para revisión durante la importación.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_action_move_in_invoice_with_perceptions" 
+              name="Facturas con Percepciones"
+              action="action_move_in_invoice_with_perceptions"
+              parent="menu_account_iva_import_root"
+              sequence="20"/>
+</odoo>
