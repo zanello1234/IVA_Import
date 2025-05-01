@@ -11,7 +11,7 @@
     'author': "Zanel  Dev",
     'website': "",
     'category': 'Accounting/Localizations',
-    'version': '17.0.1.0.0',
+    'version': '18.0.1.0.0',
     'license': 'AGPL-3',
     'depends': ['base', 'account', 'l10n_ar'],
     'data': [
